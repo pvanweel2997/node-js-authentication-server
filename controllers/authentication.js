@@ -8,15 +8,20 @@ const tokenForUser = user => {
 };
 
 exports.signin = (req, res, next) => {
+  let email = req.body.email;
+  let password = req.body.password;
+  const user = new User({
+    email,
+    password,
+  });
   // User has already had their email and password authenticated
   // We just need to give them a token
-  res.json({ token: tokenForUser(req.user) });
+  res.json({ token: tokenForUser(user) });
 };
 
 exports.signup = (req, res, next) => {
-  const email = req.body.email;
-  const password = req.body.password;
-
+  const email = req.body.formProps.email;
+  const password = req.body.formProps.password;
   if (!email || !password) {
     return res
       .status(422)
@@ -26,13 +31,11 @@ exports.signup = (req, res, next) => {
   // See if a user with the given email exists
   User.findOne({ email: email }, function (err, existingUser) {
     if (err) {
-      console.log('throw 1');
       return next(err);
     }
 
     // If a user with an email does exist, return an error
     if (existingUser) {
-      console.log('throw 1');
       return res.status(422).send({ error: 'Email is in use' });
     }
 
@@ -44,7 +47,6 @@ exports.signup = (req, res, next) => {
 
     user.save(err => {
       if (err) {
-        console.log('throw 3');
         return next(err);
       }
 

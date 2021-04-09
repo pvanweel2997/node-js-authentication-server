@@ -42,7 +42,6 @@ userSchema.methods.comparePassword = function (canidatePassword, callback) {
     if (err) {
       return callback(err);
     }
-
     callback(null, isMatch);
   });
 };
